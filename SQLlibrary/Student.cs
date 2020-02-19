@@ -30,7 +30,7 @@ namespace SQLlibrary {
                 student.LastName = reader["LastName"].ToString();
                 student.SAT = Convert.ToInt32(reader["SAT"]);
                 student.GPA = Convert.ToInt32(reader["GPA"]);
-                student.MajorID = Convert.ToInt32(reader["MajorID"]);
+               // student.MajorID = Convert.ToInt32(reader["MajorID"]);
                 students.Add(student);
             }
             return students;

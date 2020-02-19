@@ -7,6 +7,8 @@ namespace SQLcommunication {
 
             var sqllib = new BcConnection();
             sqllib.Connect(@"localhost\sqlexpress", "EdDb", "trusted_connection = true");
+            var student = new Student(sqllib);
+            var students = student.GetAllStudents();
             sqllib.Disconnect();
 
         }
