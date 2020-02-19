@@ -18,5 +18,16 @@ namespace SQLlibrary {
             Console.WriteLine("Connection opened");
         }
 
+        public void Disconnect() {
+            if(Connection == null) {
+                return;
+            }
+            if(Connection.State == System.Data.ConnectionState.Open) {
+                Connection.Close();
+                Connection.Dispose();
+                Connection = null;
+            }
+        }
+
     }
 }
