@@ -12,9 +12,10 @@ namespace SQLlibrary {
         public int SAT { get; set; }
         public double GPA { get; set; }
         public int? MajorID { get; set; }
+        public Major Major { get; set; }
 
         public override string ToString() {
-            return $"{ID}. {FirstName} {LastName} | {SAT} | {GPA}";
+            return $"{ID}. {FirstName} {LastName} | {SAT} | {GPA} | {Major?.Description}";
         }
 
         public Student() {

@@ -9,10 +9,12 @@ namespace SQLlibrary {
         public static BcConnection bcConnection { get; set; }
 
         public static List<Student> GetAllStudents() {
-            var sql = "SELECT * from Student";
+            var sql = "SELECT * from Student s Left Join Major m on m.ID = s.MajorID";
             var command = new SqlCommand(sql, bcConnection.Connection);
             var reader = command.ExecuteReader();
             if (!reader.HasRows) {
+                reader.Close();
+                reader = null;
                 Console.WriteLine("No rows shown");
                 return new List<Student>();
             }
@@ -25,6 +27,15 @@ namespace SQLlibrary {
                 student.SAT = Convert.ToInt32(reader["SAT"]);
                 student.GPA = Convert.ToDouble(reader["GPA"]);
                 //student.MajorID = Convert.ToInt32(reader["MajorID"]);
+                if (Convert.IsDBNull(reader["Description"])) {
+                    student.Major = null;
+                } else {
+                    var major = new Major {
+                        Description = reader["Description"].ToString(),
+                        MinSat = Convert.ToInt32(reader["MinSat"])
+                    };
+                    student.Major = major;
+                }
                 students.Add(student);
             }
             reader.Close();
@@ -33,10 +44,12 @@ namespace SQLlibrary {
         }
 
         public static Student GetStudentByPK(int id) {
-            var sql = $"Select * from Student Where ID = {id}";
+            var sql = $"Select * from Student Where ID = @id";
             var command = new SqlCommand(sql, bcConnection.Connection);
+            command.Parameters.AddWithValue("@id", id);
             var reader = command.ExecuteReader(); //has exceptions that you would need to catch
             if (!reader.HasRows) {
+                reader.Close();
                 return null;
             }
             reader.Read();
@@ -53,22 +66,72 @@ namespace SQLlibrary {
         }
 
         public static bool InsertStudent (Student student) {
-            var majorid = "";
+           /* var majorid = "";
             if (student.MajorID == null) {
                 majorid = "NULL";
             } 
             else {
                majorid = student.MajorID.ToString();
             }
+            */
                 var sql = $"INSERT into Student(ID, Firstname, Lastname, SAT, GPA, MajorID)" +
-                    $"Values ({student.ID},'{student.FirstName}', '{student.LastName}', {student.SAT}, {student.GPA}, {majorid});";
+                    $"Values (@ID, @FirstName, @LastName, @SAT, @GPA, @MajorID);";
                 var command = new SqlCommand(sql, bcConnection.Connection);
-                var recsAffected = command.ExecuteNonQuery();
+                command.Parameters.AddWithValue("@ID", student.ID);
+                command.Parameters.AddWithValue("@FirstName", student.FirstName);
+                command.Parameters.AddWithValue("@LastName", student.LastName);
+                command.Parameters.AddWithValue("@SAT", student.SAT);
+                command.Parameters.AddWithValue("@GPA", student.GPA);
+                command.Parameters.AddWithValue("@MajorID", student.MajorID ?? Convert.DBNull);
+            var recsAffected = command.ExecuteNonQuery();
                 if (recsAffected != 1) {
                     throw new Exception("Insert Failed");
                 }
                 return true;
             }
+
+        public static bool UpdateStudent(Student student) {
+            var sql = "UPDATE Student Set" +
+            " FirstName = @FirstName, " + 
+            " LastName = @LastName, " + 
+            " SAT = @SAT, " + 
+            " GPA = @GPA, " + 
+            " MajorID = @MajorID " +
+            " Where ID = @ID; "; //not interpolation because we are going ot use a parameterized query
+            var command = new SqlCommand(sql, bcConnection.Connection);
+            command.Parameters.AddWithValue("@ID", student.ID);
+            command.Parameters.AddWithValue("@FirstName", student.FirstName);
+            command.Parameters.AddWithValue("@LastName", student.LastName);
+            command.Parameters.AddWithValue("@SAT", student.SAT);
+            command.Parameters.AddWithValue("@GPA", student.GPA);
+            command.Parameters.AddWithValue("@MajorID", student.MajorID ?? Convert.DBNull);
+            var recsAffected = command.ExecuteNonQuery();
+            if (recsAffected != 1) {
+                throw new Exception("Update Failed");
+            }
+            return true;
+        }
+
+        public static bool DeleteStudent(Student student) {
+            var sql = "DELETE from Student" +
+                " Where ID = @ID ";
+            var command = new SqlCommand(sql, bcConnection.Connection);
+            command.Parameters.AddWithValue("@ID", student.ID);
+            var recsAffected = command.ExecuteNonQuery();
+            if(recsAffected != 1) {
+                throw new Exception("Delete Failed");
+            }
+            return true;
+        }
+
+        public static bool DeleteStudent(int id) {
+            var student = GetStudentByPK(id);
+            if(student == null) {
+                return false;
+            }
+            DeleteStudent(student);
+            return true;
+        }
 
     }
 }
