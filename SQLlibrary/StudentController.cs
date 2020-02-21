@@ -8,6 +8,16 @@ namespace SQLlibrary {
 
         public static BcConnection bcConnection { get; set; }
 
+        public static Student LoadStudentInstance(SqlDataReader reader) {
+            var student = new Student();
+            student.ID = Convert.ToInt32(reader["ID"]);
+            student.FirstName = reader["FirstName"].ToString();
+            student.LastName = reader["LastName"].ToString();
+            student.SAT = Convert.ToInt32(reader["SAT"]);
+            student.GPA = Convert.ToDouble(reader["GPA"]);
+            return student;
+        }
+
         public static List<Student> GetAllStudents() {
             var sql = "SELECT * from Student s Left Join Major m on m.ID = s.MajorID";
             var command = new SqlCommand(sql, bcConnection.Connection);
@@ -20,19 +30,20 @@ namespace SQLlibrary {
             }
             var students = new List<Student>();
             while (reader.Read()) {
-                var student = new Student();
+                var student = LoadStudentInstance(reader);
+                /*var student = new Student();
                 student.ID = Convert.ToInt32(reader["ID"]);
                 student.FirstName = reader["FirstName"].ToString();
                 student.LastName = reader["LastName"].ToString();
                 student.SAT = Convert.ToInt32(reader["SAT"]);
-                student.GPA = Convert.ToDouble(reader["GPA"]);
+                student.GPA = Convert.ToDouble(reader["GPA"]);*/
                 //student.MajorID = Convert.ToInt32(reader["MajorID"]);
                 if (Convert.IsDBNull(reader["Description"])) {
                     student.Major = null;
                 } else {
                     var major = new Major {
                         Description = reader["Description"].ToString(),
-                        MinSat = Convert.ToInt32(reader["MinSat"])
+                        MinSAT = Convert.ToInt32(reader["MinSAT"])
                     };
                     student.Major = major;
                 }
@@ -44,21 +55,22 @@ namespace SQLlibrary {
         }
 
         public static Student GetStudentByPK(int id) {
-            var sql = $"Select * from Student Where ID = @id";
+            var sql = $"Select * from Student Where ID = @ID";
             var command = new SqlCommand(sql, bcConnection.Connection);
-            command.Parameters.AddWithValue("@id", id);
+            command.Parameters.AddWithValue("@ID", id);
             var reader = command.ExecuteReader(); //has exceptions that you would need to catch
             if (!reader.HasRows) {
                 reader.Close();
                 return null;
             }
             reader.Read();
-            var student = new Student();
+            var student = LoadStudentInstance(reader);
+            /*var student = new Student();
             student.ID = Convert.ToInt32(reader["ID"]);
             student.FirstName = reader["FirstName"].ToString();
             student.LastName = reader["LastName"].ToString();
             student.SAT = Convert.ToInt32(reader["SAT"]);
-            student.GPA = Convert.ToDouble(reader["GPA"]);
+            student.GPA = Convert.ToDouble(reader["GPA"]);*/
 
             reader.Close();
             reader = null;

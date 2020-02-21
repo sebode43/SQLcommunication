@@ -11,10 +11,27 @@ namespace SQLcommunication {
             MajorController.bcConnection = sqllib;
             ////////////////////////////////////////////////// all code must go in-between the Connect and Disconnect
 
+            /*var newMajor = new Major {
+                ID = 8,
+                Description = "Engineering",
+                MinSAT = 1200,
+            };
+            var insert = MajorController.InsertMajor(newMajor);*/
+
             var majors = MajorController.GetAllMajors();
-            foreach(var major in majors) {
+            foreach (var major in majors) {
                 Console.WriteLine(major);
             }
+
+            var mpk = MajorController.GetMajorByPK(1);
+            Console.WriteLine(mpk);
+
+            //mpk.Description = "Computer Engineering";
+            //var update = MajorController.UpdateMajor(mpk);
+
+            //mpk.ID = 8;
+            //var delete = MajorController.DeleteMajor(mpk);
+
 
 
             /* var newStudent = new Student {

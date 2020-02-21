@@ -7,10 +7,10 @@ namespace SQLlibrary {
 
         public int ID { get; set; }
         public string Description { get; set; }
-        public int MinSat { get; set; }
+        public int MinSAT { get; set; }
 
         public override string ToString() {
-            return $"{ID}. {Description} | {MinSat}";
+            return $"{ID}. {Description} | {MinSAT}";
         }
 
     }
