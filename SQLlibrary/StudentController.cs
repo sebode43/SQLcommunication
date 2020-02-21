@@ -15,6 +15,7 @@ namespace SQLlibrary {
             student.LastName = reader["LastName"].ToString();
             student.SAT = Convert.ToInt32(reader["SAT"]);
             student.GPA = Convert.ToDouble(reader["GPA"]);
+            student.MajorID = Convert.IsDBNull(reader["MajorID"]) ? (int?)null : Convert.ToInt32(reader["MajorID"]);
             return student;
         }
 
@@ -36,8 +37,8 @@ namespace SQLlibrary {
                 student.FirstName = reader["FirstName"].ToString();
                 student.LastName = reader["LastName"].ToString();
                 student.SAT = Convert.ToInt32(reader["SAT"]);
-                student.GPA = Convert.ToDouble(reader["GPA"]);*/
-                //student.MajorID = Convert.ToInt32(reader["MajorID"]);
+                student.GPA = Convert.ToDouble(reader["GPA"]);
+                student.MajorID = Convert.IsDBNull(reader["MajorID"]) ? (int?)null : Convert.ToInt32(reader["MajorID"]);*/
                 if (Convert.IsDBNull(reader["Description"])) {
                     student.Major = null;
                 } else {
@@ -65,13 +66,6 @@ namespace SQLlibrary {
             }
             reader.Read();
             var student = LoadStudentInstance(reader);
-            /*var student = new Student();
-            student.ID = Convert.ToInt32(reader["ID"]);
-            student.FirstName = reader["FirstName"].ToString();
-            student.LastName = reader["LastName"].ToString();
-            student.SAT = Convert.ToInt32(reader["SAT"]);
-            student.GPA = Convert.ToDouble(reader["GPA"]);*/
-
             reader.Close();
             reader = null;
             return student;

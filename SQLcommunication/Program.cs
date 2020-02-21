@@ -9,7 +9,30 @@ namespace SQLcommunication {
             sqllib.Connect(@"localhost\sqlexpress", "EdDb", "trusted_connection = true");
             StudentController.bcConnection = sqllib;
             MajorController.bcConnection = sqllib;
+            InstructorController.bcConnection = sqllib;
             ////////////////////////////////////////////////// all code must go in-between the Connect and Disconnect
+
+            var instr = InstructorController.GetInstructorByPK(100);
+            Console.WriteLine(instr);
+
+            var newInstructor = new Instructor {
+                ID = 330,
+                Firstname = "Paul",
+                Lastname = "Harrison",
+                YearsExperience = 35,
+                IsTenured = true
+            };
+            /*var insertinstructor = InstructorController.InsertInstructor(newInstructor);
+
+            newInstructor.Lastname = "Starr";
+            var instupdate = InstructorController.UpdateInstructor(newInstructor);*/
+
+            var instructors = InstructorController.GetAllInstructors();
+            foreach (var instructor in instructors) {
+                Console.WriteLine(instructor);
+            }
+
+            //var deleteinstructor = InstructorController.DeleteInstructor(newInstructor);
 
             /*var newMajor = new Major {
                 ID = 8,
